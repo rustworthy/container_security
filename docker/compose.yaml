@@ -1,0 +1,23 @@
+version: "3.2"
+
+services:
+  cnitch:
+    image: quay.io/nicholasjackson/cnitch:latest
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    group_add:
+      - ${DOCKER_GROUP_ID}
+    command: ["--hostname=localhost", "--statsd-server=statsd:9125"]
+
+  statsd:
+    image: prom/statsd-exporter
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - 127.0.0.1:9090:9090
+  
